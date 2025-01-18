@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, {ReactNode} from 'react';
+import {BrowserRouter as Router, Routes, Route, useLocation} from "react-router-dom";
+import LoginForm from "./forms/LoginForm";
+import RegisterForm from "./forms/RegisterForm";
+import Products from "./pages/Products";
+import { PathNames } from "./router/PathNames";
 import './App.css'
+import TopMenu from './components/TopMenu';
+import {UserProvider} from "./context/UserContext.tsx";
+import Orders from "./pages/Orders.tsx";
+import {CartProvider} from "./context/CartContext.tsx";
+import CartPage from "./pages/CartPage.tsx";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface LayoutProps {
+    children: ReactNode;
 }
 
-export default App
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+    const location = useLocation();
+
+    // Ukryj menu na stronach logowania i rejestracji
+    const hideMenu =
+        location.pathname === PathNames.anonymous.login ||
+        location.pathname === PathNames.anonymous.register;
+
+    return (
+        <>
+            {!hideMenu && <TopMenu />}
+            {children}
+        </>
+    );
+};
+
+const App = () => {
+    return (
+        <Router>
+            <UserProvider>
+                <CartProvider>
+                    <Layout>
+                        <Routes>
+                            <Route path={PathNames.anonymous.register} element={<RegisterForm />} />
+                            <Route path={PathNames.anonymous.login} element={<LoginForm />} />
+                            <Route path={PathNames.worker.products} element={<Products />} />
+                            <Route path={PathNames.client.products} element={<Products />} />
+                            <Route path={PathNames.worker.orders} element={<Orders />} />
+                            <Route path={PathNames.client.orders} element={<Orders />} />
+                            <Route path={PathNames.client.cart} element={<CartPage />} />
+                        </Routes>
+                    </Layout>
+                </CartProvider>
+            </UserProvider>
+        </Router>
+    );
+};
+
+export default App;

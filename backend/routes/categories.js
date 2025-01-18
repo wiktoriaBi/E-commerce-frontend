@@ -4,8 +4,8 @@ const Category = require('../models/Category');
 const passport = require("./passport");
 const {StatusCodes} = require("http-status-codes");
 
-// GET all categories
-router.get('/', passport.authenticate("jwt", {session : false}),
+// GET all categories passport.authenticate("jwt", {session : false}),
+router.get('/',
     async (req, res) => {
     const categories = await Category.fetchAll();
     if (!categories || categories.length === 0) {

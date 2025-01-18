@@ -33,7 +33,8 @@ router.post('/',
         //Creating jwt token
         token = sign(
             {
-                email: user.get('email')
+                email: user.get('email'),
+                role: user.get('role')
             },
             Config.secret,
             { expiresIn: 3000 }

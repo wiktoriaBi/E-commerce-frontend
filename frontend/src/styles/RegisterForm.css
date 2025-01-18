@@ -1,0 +1,20 @@
+.back-link {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.back-link p {
+    margin: 0;
+}
+
+.back-link a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.back-link a:hover {
+    font-weight: bold;
+}

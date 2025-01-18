@@ -1,5 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, "Poppins", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -23,11 +31,16 @@ a:hover {
 }
 
 body {
-  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  align-items: center;
   min-height: 100vh;
+  background: url('./assets/back.jpg') no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 h1 {
@@ -54,15 +67,3 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}

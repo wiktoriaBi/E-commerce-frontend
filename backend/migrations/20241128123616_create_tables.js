@@ -21,7 +21,7 @@ exports.up = async function (knex) {
         })
         .createTable('orders', (table) => {
             table.increments('id').primary();
-            table.datetime('approval_date').nullable();
+            table.date('approval_date').nullable();
             table.integer('status_id').unsigned().references('id').inTable('order_status');
             table.string('username').notNullable();
             table.string('email').notNullable();

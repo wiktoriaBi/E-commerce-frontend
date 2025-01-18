@@ -21,19 +21,7 @@ router.get('/', passport.authenticate("jwt", {session : false}),
     if(!orders || orders.length === 0){
         return res.status(StatusCodes.NO_CONTENT).send();
     }
-    const prettyOrders= orders.map(order => ({
-        id: order.get('id'),
-        approval_date: order.get('approval_date'),
-        status_id: order.get('status_id'),
-        username: order.get('username'),
-        email: order.get('email'),
-        phone: order.get('phone'),
-        items: order.related('items').map(item => ({
-            quantity: item.get('quantity'),
-            product: item.related('product').toJSON()
-        }))
-    }));
-    res.json(prettyOrders);
+    res.json(orders);
 });
 
 // GET user's orders
@@ -152,15 +140,17 @@ router.patch('/:id',
     // Walidacja zmiany stanu
     const invalidTransition =
         (currentStatus.get('name') === 'CANCELLED') ||
-        (currentStatus.get('name') === 'COMPLETED');
+        (currentStatus.get('name') === 'COMPLETED') ||
+        ((currentStatus.get('name') === 'APPROVED') && (newStatus.get('name') === 'PENDING'));
 
     if (invalidTransition) {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Invalid status transition' });
     }
 
+    const moment = require('moment');
     let approval_date = order.get('approval_date');
     if(newStatus.get('name') === 'APPROVED') {
-        approval_date = new Date().toISOString();
+        approval_date = moment().format("YYYY-MM-DD");
     }
 
     order.set({

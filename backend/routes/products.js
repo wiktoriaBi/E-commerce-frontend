@@ -5,8 +5,8 @@ const Product = require('../models/Product');
 const passport = require("./passport");
 const { body, validationResult, param} = require("express-validator");
 
-// GET all products
-router.get('/', passport.authenticate("jwt", {session : false}), async (req, res) => {
+// GET all products        passport.authenticate("jwt", {session : false}),
+router.get('/', async (req, res) => {
     const products = await Product.fetchAll({ withRelated: ['category'] });
     if(products.length === 0) {
         return res.status(StatusCodes.NO_CONTENT).send();
