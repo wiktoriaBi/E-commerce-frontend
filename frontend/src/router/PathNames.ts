@@ -3,7 +3,7 @@
 export const PathNames = {
     anonymous: {
         register: '/register',
-        login: '/login'
+        login: '/'
     },
     client: {
         products: '/products',

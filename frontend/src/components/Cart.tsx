@@ -1,46 +1,11 @@
 import React, { useState } from "react";
-import { Table, Button, Modal, Form } from "react-bootstrap";
-import { useFormik } from "formik";
-import * as yup from "yup";
+import { Table, Button } from "react-bootstrap";
 import { useCart } from "../context/CartContext";
+import OrderModal from "./modals/OrderModal.tsx";
 
 const Cart: React.FC = () => {
     const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
     const [showModal, setShowModal] = useState(false);
-    const [totalPrice, setTotalPrice] = useState(0);
-
-    // Calculate total price
-    const calculateTotalPrice = () => {
-        const total = cart.reduce((acc, item) => acc + item.quantity * parseFloat(String(item.product.price)), 0);
-        setTotalPrice(total);
-    };
-
-    // Show order modal
-    const handleMakeOrder = () => {
-        calculateTotalPrice();
-        setShowModal(true);
-    };
-
-    // Formik validation schema
-    const validationSchema = yup.object({
-        username: yup.string().required("Username is required"),
-        email: yup.string().email("Invalid email address").required("Email is required"),
-        phone: yup
-            .string()
-            .matches(/^\+?\d{9,15}$/, "Invalid phone number")
-            .required("Phone number is required"),
-    });
-
-    const formik = useFormik({
-        initialValues: { username: "", email: "", phone: "" },
-        validationSchema,
-        onSubmit: (values) => {
-            console.log("Order submitted:", { ...values, cart, totalPrice });
-            clearCart();
-            setShowModal(false);
-            alert("Order successfully placed!");
-        },
-    });
 
     return (
         <div className="container mt-4">
@@ -103,7 +68,7 @@ const Cart: React.FC = () => {
                         <Button variant="secondary" onClick={clearCart}>
                             Clear Cart
                         </Button>
-                        <Button variant="primary" onClick={handleMakeOrder}>
+                        <Button variant="primary" onClick={() => setShowModal(true)}>
                             Make Order
                         </Button>
                     </div>
@@ -111,62 +76,12 @@ const Cart: React.FC = () => {
             )}
 
             {/* Order modal */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Make Order</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={formik.handleSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Username</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="username"
-                                value={formik.values.username}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.username && formik.touched.username}
-                            />
-                            <Form.Control.Feedback type="invalid">{formik.errors.username}</Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control
-                                type="email"
-                                name="email"
-                                value={formik.values.email}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.email && formik.touched.email}
-                            />
-                            <Form.Control.Feedback type="invalid">{formik.errors.email}</Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Phone</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="phone"
-                                value={formik.values.phone}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.phone && formik.touched.phone}
-                            />
-                            <Form.Control.Feedback type="invalid">{formik.errors.phone}</Form.Control.Feedback>
-                        </Form.Group>
-                        <p className="font-weight-bold">
-                            Do you really want to make an order with total price ${totalPrice.toFixed(2)}?
-                        </p>
-                        <div className="d-flex justify-content-end">
-                            <Button variant="secondary" onClick={() => setShowModal(false)}>
-                                Cancel
-                            </Button>
-                            <Button variant="primary" type="submit" className="ms-2">
-                                Confirm
-                            </Button>
-                        </div>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <OrderModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                cart={cart}
+                onOrderSuccess={clearCart}
+            />
         </div>
     );
 };
