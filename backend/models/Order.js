@@ -8,8 +8,8 @@ const Order = bookshelf.model('Order', {
     items() {
         return this.hasMany('OrderItem');
     },
-    opinions() {
-            return this.hasMany('Opinion');
+    opinion() {
+        return this.hasOne('Opinion', 'order_id');  // Assuming 'order_id' in opinions table
     }
 });
 

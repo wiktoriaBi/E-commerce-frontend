@@ -16,7 +16,7 @@ router.get('/', passport.authenticate("jwt", {session : false}),
         return res.status(StatusCodes.FORBIDDEN).send();
     }
     let orders;
-    orders = await Order.fetchAll({withRelated: ['status', 'items.product']});
+    orders = await Order.fetchAll({withRelated: ['status', 'items.product', 'opinion']});
 
     if(!orders || orders.length === 0){
         return res.status(StatusCodes.NO_CONTENT).send();
@@ -219,6 +219,11 @@ router.post('/:id/opinions',[
     console.log(statusName);
     if (!['COMPLETED', 'CANCELLED'].includes(statusName.toUpperCase())) {
         return res.status(StatusCodes.BAD_REQUEST).json({error: 'Opinion can only be added to COMPLETED or CANCELLED orders'});
+    }
+    //Sprawdzenie czy opinia już istnieje
+    const opinionExist = await Opinion.where({ order_id: orderId }).fetchAll();
+    if (!opinionExist.isEmpty()) {
+        return res.status(StatusCodes.CONFLICT).json({ error: 'Opinion for order already exist' });
     }
 
     if (req.user.get('username') !== order.get('username')) {

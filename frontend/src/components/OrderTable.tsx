@@ -7,6 +7,7 @@ import {Order, Status, OrderItem} from "../types";
 import moment from 'moment';
 import ChangeStatusModal from "./modals/ChangeStatusModal.tsx";
 import "../styles/noOrder.css"
+import OpinionModal from "./modals/OpinionModal.tsx";
 
 const OrderTable: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -18,6 +19,9 @@ const OrderTable: React.FC = () => {
     const [error, setError] = useState(false);
     const { role } = useUserContext();
     const [statusFilter, setStatusFilter] =  useState<Status | null>(null);
+    const [showRateModal, setShowRateModal] = useState(false);
+    const [rating, setRating] = useState<number | null>(null);
+    const [content, setContent] = useState<string>("");
 
     let endpoint = `${properties.serverAddress}/orders`;
     if(role === "CLIENT") endpoint =  `${properties.serverAddress}/orders/user/${localStorage.getItem("username")}`;
@@ -52,6 +56,7 @@ const OrderTable: React.FC = () => {
             }
         }
     };
+
     useEffect(() => {
         fetchOrders();
         fetchStatuses();
@@ -148,6 +153,35 @@ const OrderTable: React.FC = () => {
             });
     };
 
+    const handleRateOrder = (order: Order) => {
+        setSelectedOrder(order);
+        setShowRateModal(true);
+        setRating(null);
+        setContent("");
+        setShowFailedAlert(false);
+    };
+
+    const handleSubmitReview = async () => {
+        if (!selectedOrder || rating === null || !content.trim()) return;
+
+        try {
+            await axios.post(
+                `${properties.serverAddress}/orders/${selectedOrder.id}/opinions`,
+                { rating, content },
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+                }
+            );
+
+            fetchOrders();
+            setShowRateModal(false);
+        } catch (error) {
+            console.error("Error submitting review:", error);
+            setError(true);
+            setShowFailedAlert(true);
+        }
+    };
+
     return (
         <div className="container mt-4">
             <div className="col-md-6 m-1">
@@ -178,6 +212,7 @@ const OrderTable: React.FC = () => {
                         <th>Products</th>
                         <th>Total Price</th>
                         <th>Status</th>
+                        <th>Rating</th>
                         {role === "WORKER" && <th>Action</th>}
                     </tr>
                     </thead>
@@ -197,6 +232,26 @@ const OrderTable: React.FC = () => {
                             </td>
                             <td>${calculateTotalPrice(order.items)}</td>
                             <td>{order.status.name}</td>
+                            <td>
+                                {role === "CLIENT" && (
+                                    <Button
+                                        variant="success"
+                                        disabled={order.status.name !== "COMPLETED" && order.status.name !== "CANCELLED"}
+                                        onClick={() => handleRateOrder(order)}
+                                    >
+                                        Rate
+                                    </Button>
+                                )}
+                                {role === "WORKER" && (
+                                    <div>
+                                        {order.opinion && Object.keys(order.opinion).length > 0 ? (
+                                            <p>Rating: {order.opinion.rating} - {order.opinion.content}</p>
+                                        ) : (
+                                            <p>No rating</p>
+                                        )}
+                                    </div>
+                                )}
+                            </td>
                             {role === "WORKER" && (
                                 <td>
                                     <Button
@@ -211,7 +266,7 @@ const OrderTable: React.FC = () => {
                     ))}
                     </tbody>
                 </Table>
-                {/* Modal for changing status */}
+                {/* Modals for changing status and opinions*/}
                 <ChangeStatusModal
                     statuses={statuses}
                     newStatusId={newStatusId}
@@ -223,6 +278,17 @@ const OrderTable: React.FC = () => {
                     showFailed={showFailedAlert}
                     handleCloseFailed={handleCloseFailedAlert}
                 />
+                <OpinionModal
+                    showRateModal={showRateModal}
+                    onClose={() => setShowRateModal(false)}
+                    rating={rating}
+                    onRatingChange={(e) => setRating(Number(e.target.value))}
+                    content={content}
+                    onContentChange={(e) => setContent(e.target.value)}
+                    handleSubmitReview={handleSubmitReview}
+                    error={error}
+                    showFailed={showFailedAlert}
+                    handleCloseFailed={handleCloseFailedAlert}/>
             </div>
             )}
         </div>
