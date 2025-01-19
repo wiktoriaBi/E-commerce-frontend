@@ -213,7 +213,7 @@ const OrderTable: React.FC = () => {
                         <th>Total Price</th>
                         <th>Status</th>
                         <th>Rating</th>
-                        {role === "WORKER" && <th>Action</th>}
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -233,24 +233,13 @@ const OrderTable: React.FC = () => {
                             <td>${calculateTotalPrice(order.items)}</td>
                             <td>{order.status.name}</td>
                             <td>
-                                {role === "CLIENT" && (
-                                    <Button
-                                        variant="success"
-                                        disabled={order.status.name !== "COMPLETED" && order.status.name !== "CANCELLED"}
-                                        onClick={() => handleRateOrder(order)}
-                                    >
-                                        Rate
-                                    </Button>
-                                )}
-                                {role === "WORKER" && (
-                                    <div>
-                                        {order.opinion && Object.keys(order.opinion).length > 0 ? (
-                                            <p>Rating: {order.opinion.rating} - {order.opinion.content}</p>
-                                        ) : (
-                                            <p>No rating</p>
-                                        )}
-                                    </div>
-                                )}
+                                <div>
+                                    {order.opinion && Object.keys(order.opinion).length > 0 ? (
+                                        <p>Rating: {order.opinion.rating} - {order.opinion.content}</p>
+                                    ) : (
+                                        <p>No rating</p>
+                                    )}
+                                </div>
                             </td>
                             {role === "WORKER" && (
                                 <td>
@@ -259,6 +248,17 @@ const OrderTable: React.FC = () => {
                                         onClick={() => handleOpenModal(order)}
                                     >
                                         Change Status
+                                    </Button>
+                                </td>
+                            )}
+                            {role === "CLIENT" && (
+                                <td>
+                                    <Button
+                                        variant="success"
+                                        disabled={order.status.name !== "COMPLETED" && order.status.name !== "CANCELLED"}
+                                        onClick={() => handleRateOrder(order)}
+                                    >
+                                        Rate
                                     </Button>
                                 </td>
                             )}
