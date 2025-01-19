@@ -73,7 +73,7 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({product, categories,
                         }}
                         onSubmit={(values) => handleSubmit(values)}
                     >
-                        {({ values, handleChange, handleSubmit, errors }) => (
+                        {({ values, handleChange, handleSubmit, errors, setFieldValue }) => (
                             <Form noValidate onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Name</Form.Label>
@@ -87,14 +87,37 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({product, categories,
                                     <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
-                                    <Form.Label>Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="description"
-                                        value={values.description}
-                                        onChange={handleChange}
-                                        isInvalid={!!errors.description}
-                                    />
+                                    <div className="d-flex align-items-center">
+                                        <Form.Control
+                                            as="textarea"
+                                            name="description"
+                                            value={values.description}
+                                            onChange={handleChange}
+                                            isInvalid={!!errors.description}
+                                            className="flex-grow-1"
+                                        />
+                                        <Button
+                                            variant="outline-secondary"
+                                            className="ms-2"
+                                            onClick={async () => {
+                                                try {
+                                                    const response = await axios.get<{ description: string }>
+                                                    (`${properties.serverAddress}/products/${product.id}/seo-description`, {
+                                                        headers: {
+                                                            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                                                        },
+                                                    });
+                                                    const {description} = response.data;
+                                                    const cleanDescription = description.replace(/^"|"$/g, '');
+                                                    await setFieldValue("description", cleanDescription); // Ustawienie opisu w polu formularza
+                                                } catch (error) {
+                                                    console.error("Error generating description:", error);
+                                                }
+                                            }}
+                                        >
+                                            <i className="fas fa-magic"></i>
+                                        </Button>
+                                    </div>
                                     <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
