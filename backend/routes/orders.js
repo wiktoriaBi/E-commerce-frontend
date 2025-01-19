@@ -29,7 +29,7 @@ router.get('/user/:username', passport.authenticate("jwt", {session : false}),
     async (req, res) => {
     if (req.user.get("role")==="CLIENT" && req.params.username !== req.user.username){
     }
-    const orders = await Order.where({ username: req.params.username }).fetchAll({ withRelated: ['status', 'items.product', 'opinion'], require: false });
+    const orders = await Order.where({ username: req.params.username }).fetchAll({ withRelated: ['status', 'items.product', 'opinion'] });
     if (orders.length === 0) {
         return res.status(StatusCodes.NO_CONTENT).send();
     }

@@ -24,7 +24,7 @@ export interface Order {
     status: Status;
     username: string;
     items: OrderItem[];
-    opinion: Opinion | null;
+    opinion: Opinion;
 }
 
 export interface Status {
@@ -33,6 +33,8 @@ export interface Status {
 }
 
 export interface Opinion {
-    rating: number;
-    content: string;
+    id: number | null;
+    order_id: number | null;
+    rating: number | null;
+    content: string | null;
 }

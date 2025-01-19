@@ -10,6 +10,7 @@ import {UserProvider} from "./context/UserContext.tsx";
 import Orders from "./pages/Orders.tsx";
 import {CartProvider} from "./context/CartContext.tsx";
 import CartPage from "./pages/CartPage.tsx";
+import {RequireAuth} from "./router/RequireAuth.tsx";
 
 interface LayoutProps {
     children: ReactNode;
@@ -40,11 +41,24 @@ const App = () => {
                         <Routes>
                             <Route path={PathNames.anonymous.register} element={<RegisterForm />} />
                             <Route path={PathNames.anonymous.login} element={<LoginForm />} />
-                            <Route path={PathNames.worker.products} element={<Products />} />
-                            <Route path={PathNames.client.products} element={<Products />} />
-                            <Route path={PathNames.worker.orders} element={<Orders />} />
-                            <Route path={PathNames.client.orders} element={<Orders />} />
-                            <Route path={PathNames.client.cart} element={<CartPage />} />
+
+                            <Route path={PathNames.authenticated.products} element={
+                                <RequireAuth allowedRoles={["WORKER", "CLIENT"]}>
+                                    <Products />
+                                </RequireAuth>
+                            }/>
+
+                            <Route path={PathNames.authenticated.orders} element={
+                                <RequireAuth allowedRoles={["WORKER", "CLIENT"]}>
+                                    <Orders />
+                                </RequireAuth>
+                            } />
+
+                            <Route path={PathNames.client.cart} element={
+                               <RequireAuth allowedRoles={["CLIENT"]}>
+                                    <CartPage />
+                                </RequireAuth>
+                            } />
                         </Routes>
                     </Layout>
                 </CartProvider>

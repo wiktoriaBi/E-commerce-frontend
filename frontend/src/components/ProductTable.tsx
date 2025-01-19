@@ -7,12 +7,14 @@ import Table from 'react-bootstrap/Table';
 import { Button } from "react-bootstrap";
 import ProductEditModal from './modals/EditProduct';
 import { useCart } from "../context/CartContext";
+import {AddProductModal} from "./modals/AddProductModal.tsx";
 
 const ProductTable: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [nameFilter, setNameFilter] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
+    const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null); // Produkt do edycji
     const { role } = useUserContext();
@@ -58,6 +60,13 @@ const ProductTable: React.FC = () => {
     return (
         <div className="container mt-4">
             <div className="row mb-3">
+                {role === 'WORKER' && (
+                    <div className="row mb-4">
+                        <div className="col">
+                            <Button onClick={ () => setShowAddModal(true)}>Add product</Button>
+                        </div>
+                    </div>
+                )}
                 <div className="col-md-6">
                     <input
                         type="text"
@@ -121,6 +130,9 @@ const ProductTable: React.FC = () => {
                     </tbody>
                 </Table>
             </div>
+
+            <AddProductModal showEdit={showAddModal} handleCloseEdit={() => {setShowAddModal(false)}}
+                             refreshData={fetchProducts} categories={categories}></AddProductModal>
 
             {/* Modal do edycji produktu */}
             {editingProduct && (

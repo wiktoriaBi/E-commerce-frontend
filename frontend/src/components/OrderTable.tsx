@@ -32,7 +32,8 @@ const OrderTable: React.FC = () => {
                     Authorization: `Bearer ${localStorage.getItem("authToken")}`,
                 },
             });
-            setOrders(response.data);
+            console.log(response.data as Order[])
+            setOrders(response.data as Order[]);
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -183,35 +184,38 @@ const OrderTable: React.FC = () => {
     };
 
     return (
+
         <div className="container mt-4">
-            <div className="col-md-6 m-1">
-                <select
-                    className="form-select"
-                    value={statusFilter?.id || ""}
-                    onChange={handleStatusFilter}
-                >
-                    <option value="">All Statuses</option>
-                    {statuses.map((status) => (
-                        <option key={status.id} value={status.id}>
-                            {status.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            {role=="WORKER" && (
+                <div className="col-md-6 m-1">
+                    <select
+                        className="form-select"
+                        value={statusFilter?.id || ""}
+                        onChange={handleStatusFilter}
+                    >
+                        <option value="">All Statuses</option>
+                        {statuses.map((status) => (
+                            <option key={status.id} value={status.id}>
+                                {status.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
             {orders.length === 0 ? (
                 <div className="no-orders">
                     <p>No orders found</p>
                 </div>
             ) : (
-            <div className="table-responsive">
-                <Table striped bordered hover>
-                    <thead>
-                    <tr className="table-info">
-                        <th>Approval Date</th>
-                        <th>Username</th>
-                        <th>Products</th>
-                        <th>Total Price</th>
-                        <th>Status</th>
+                <div className="table-responsive">
+                    <Table striped bordered hover>
+                        <thead>
+                        <tr className="table-info">
+                            <th>Approval Date</th>
+                            <th>Username</th>
+                            <th>Products</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
                         <th>Rating</th>
                         <th>Action</th>
                     </tr>
@@ -255,7 +259,7 @@ const OrderTable: React.FC = () => {
                                 <td>
                                     <Button
                                         variant="success"
-                                        disabled={order.status.name !== "COMPLETED" && order.status.name !== "CANCELLED"}
+                                        disabled={ order.status.name !== "COMPLETED" && order.status.name !== "CANCELLED"}
                                         onClick={() => handleRateOrder(order)}
                                     >
                                         Rate

@@ -12,19 +12,19 @@ const TopMenu: React.FC = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Nav.Link as={Link} to={PathNames.worker.products}>
+                    <Nav.Link as={Link} to={PathNames.authenticated.products}>
                         Products
                     </Nav.Link>
                     {role === 'WORKER' && (
                         <>
-                            <Nav.Link as={Link} to={PathNames.worker.orders}>
+                            <Nav.Link as={Link} to={PathNames.authenticated.orders}>
                                 Orders
                             </Nav.Link>
                         </>
                     )}
                     {role === 'CLIENT' && (
                         <>
-                            <Nav.Link as={Link} to={PathNames.client.orders}>
+                            <Nav.Link as={Link} to={PathNames.authenticated.orders}>
                                 My Orders
                             </Nav.Link>
                             <Nav.Link as={Link} to={PathNames.client.cart}>

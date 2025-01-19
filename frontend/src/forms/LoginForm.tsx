@@ -1,7 +1,7 @@
 import {FaUser, FaLock} from "react-icons/fa"
 import {Link, useNavigate} from "react-router-dom";
 import '../styles/LoginForm.css'
-import {useState} from "react";
+import React, {useState} from "react";
 import properties from "../properties/properties.ts";
 import {PathNames} from "../router/PathNames.ts";
 import {useUserContext} from "../context/UserContext.tsx";
@@ -17,7 +17,8 @@ const LoginForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { setRole } = useUserContext();
-    const [error, setError] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showError, setShowError] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -39,24 +40,21 @@ const LoginForm = () => {
 
                 setRole(decodedToken.role);
                 // Przekierowanie w zależności od roli użytkownika
-                if (decodedToken.role === "WORKER") {
-                    navigate(PathNames.worker.products);
-                } else if (decodedToken.role === "CLIENT") {
-                    navigate(PathNames.client.products);
-                }
+                navigate(PathNames.authenticated.products);
                 localStorage.setItem("authToken", token);
                 localStorage.setItem("username", username);
             }
-            else if (r.status === 400) {
-                setError("Invalid username or password.");
-            }
-            }).catch((error) => console.log(error));
+            }).catch((error) => {
+                console.log(error.response.data);
+                setErrorMessage(error.response.data.error);
+                setShowError(true);
+            });
     };
     return (
         <div className='wrapper'>
             <form onSubmit={handleSubmit}>
                 <h1>Login</h1>
-                {error && <p className="error">{error}</p>}
+                {showError && <p className="text-bg-danger border-danger rounded">{errorMessage}</p>}
                 <div className="input-box">
                     <input type='text'
                            placeholder='Username'

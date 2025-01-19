@@ -6,12 +6,16 @@ export const PathNames = {
         login: '/'
     },
     client: {
-        products: '/products',
+        // products: '/products',
         cart: '/cart',
-        orders: '/orders'
+        // orders: '/orders'
     },
-    worker: {
+    authenticated: {
         products: '/products',
         orders: '/orders'
     }
+    // worker: {
+    //     products: '/products',
+    //     orders: '/orders'
+    // }
 }

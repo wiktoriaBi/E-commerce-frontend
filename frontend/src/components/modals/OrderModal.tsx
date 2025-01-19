@@ -1,10 +1,11 @@
 import { CartItem } from "../../context/CartContext";
-import React from "react";
+import React, {useState} from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import properties from "../../properties/properties.ts";
+import AlertError from "../alerts/AlertError.tsx";
 
 
 interface OrderModalProps {
@@ -16,6 +17,9 @@ interface OrderModalProps {
 
 const OrderModal: React.FC<OrderModalProps> = ({ show, onClose, cart, onOrderSuccess }) => {
     const totalPrice = cart.reduce((acc, item) => acc + item.quantity * parseFloat(String(item.product.price)), 0);
+
+    const [showFailed, setShowFailed] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Formik validation schema
     const validationSchema = yup.object({
@@ -55,6 +59,8 @@ const OrderModal: React.FC<OrderModalProps> = ({ show, onClose, cart, onOrderSuc
                 }
             } catch (error) {
                 console.error("Error submitting order:", error);
+                setErrorMessage(error.response.data);
+                setShowFailed(true);
                 alert("An error occurred. Please try again.");
             }
             //clearCart();
@@ -66,6 +72,9 @@ const OrderModal: React.FC<OrderModalProps> = ({ show, onClose, cart, onOrderSuc
             <Modal.Header closeButton>
                 <Modal.Title>Make Order</Modal.Title>
             </Modal.Header>
+            <AlertError message={errorMessage} show={showFailed} handleClose={ () => setShowFailed(false)}
+                        className="m-2">
+            </AlertError>
             <Modal.Body>
                 <Form onSubmit={formik.handleSubmit}>
                     <Form.Group className="mb-3">

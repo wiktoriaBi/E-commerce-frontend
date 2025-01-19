@@ -18,6 +18,7 @@ const UserContext = createContext<UserContextProps>({
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [role, setRole] = useState<string | null>(null);
     const navigate = useNavigate();
+    console.log("UserContext!!!");
 
     useEffect(() => {
         const checkToken = () => {
