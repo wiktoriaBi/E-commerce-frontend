@@ -183,6 +183,8 @@ const OrderTable: React.FC = () => {
         }
     };
 
+    console.log("ORDERS RENDERED!!!");
+
     return (
 
         <div className="container mt-4">

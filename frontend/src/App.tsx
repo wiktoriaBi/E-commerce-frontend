@@ -11,6 +11,7 @@ import Orders from "./pages/Orders.tsx";
 import {CartProvider} from "./context/CartContext.tsx";
 import CartPage from "./pages/CartPage.tsx";
 import {RequireAuth} from "./router/RequireAuth.tsx";
+import {PageNotFound} from "./pages/PageNotFound.tsx";
 
 interface LayoutProps {
     children: ReactNode;
@@ -48,17 +49,22 @@ const App = () => {
                                 </RequireAuth>
                             }/>
 
+                            {/*<Route element={<RequireAuth allowedRoles={["WORKER", "CLIENT"]}/>}>*/}
+                            {/*    <Route path={PathNames.authenticated.orders} element={<Orders />} />*/}
+                            {/*</Route>*/}
+
                             <Route path={PathNames.authenticated.orders} element={
-                                <RequireAuth allowedRoles={["WORKER", "CLIENT"]}>
+                                <RequireAuth allowedRoles={['WORKER', 'CLIENT']}>
                                     <Orders />
                                 </RequireAuth>
                             } />
 
                             <Route path={PathNames.client.cart} element={
-                               <RequireAuth allowedRoles={["CLIENT"]}>
+                               <RequireAuth allowedRoles={['CLIENT']}>
                                     <CartPage />
                                 </RequireAuth>
                             } />
+                            <Route path="*" element={<PageNotFound />} />
                         </Routes>
                     </Layout>
                 </CartProvider>

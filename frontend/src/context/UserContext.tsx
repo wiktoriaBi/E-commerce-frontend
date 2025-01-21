@@ -24,18 +24,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const checkToken = () => {
             const token = localStorage.getItem('authToken');
             if (!token) {
+                console.log("No token found");
                 // Brak tokenu, brak roli
                 setRole(null);
                 return;
             }
             try {
                 const decodedToken: { role: string; exp: number } = jwtDecode(token);
+                console.log(decodedToken);
                 const currentTime = Date.now() / 1000;
                 if (decodedToken.exp < currentTime) {
                     // Token wygasł
                     localStorage.removeItem('authToken');
                     navigate(PathNames.anonymous.login);
                 } else {
+                    console.log("Set role: ", decodedToken.role);
                     setRole(decodedToken.role);
                 }
             } catch {
