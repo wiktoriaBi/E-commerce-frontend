@@ -1,7 +1,6 @@
 import {useUserContext} from "../context/UserContext.tsx";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {PathNames} from "./PathNames.ts";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -16,24 +15,18 @@ export const RequireAuth: React.FC<ProtectedRouteProps> = ({allowedRoles, childr
    const [canRender, setCanRender] = useState(false); // Track when children can render
     console.log(role)
 
-
-    console.log("Allowed roles (type):", typeof allowedRoles[0]);
-    console.log("User role (type):", typeof role);
-
    useEffect(() => {
        const checkPermissions = () => {
            console.log("Allowed roles:"+ allowedRoles);
            console.log("User role:" + role as string)
-           console.log("Index:" + allowedRoles.indexOf(role as string));
 
            if (role === null) {
-               console.log("role==null:", {replace: true});
+               console.log("role==null:");
                navigate('/', {replace: true});
            }
            else if (!allowedRoles.includes(role as string)) {
                console.log("Role not allowed!!!")
                navigate('/notfound', {replace: true} )
-               //navigate("/notfound", {replace: true});
            } else {
                console.log("Role allowed")
            }

@@ -18,6 +18,7 @@ const UserContext = createContext<UserContextProps>({
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [role, setRole] = useState<string | null>(null);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     console.log("UserContext!!!");
 
     useEffect(() => {
@@ -27,6 +28,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.log("No token found");
                 // Brak tokenu, brak roli
                 setRole(null);
+                setLoading(false);
                 return;
             }
             try {
@@ -47,6 +49,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setRole(null);
                 navigate(PathNames.anonymous.login); // Przekierowanie na login
             }
+            finally {
+                setLoading(false);
+            }
     };
     checkToken();
 }, [navigate]);
@@ -56,6 +61,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setRole(null);
         navigate(PathNames.anonymous.login);
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <UserContext.Provider value={{ role, setRole, logOut }}>

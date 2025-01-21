@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {BrowserRouter as Router, Routes, Route, useLocation} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import LoginForm from "./forms/LoginForm";
 import RegisterForm from "./forms/RegisterForm";
 import Products from "./pages/Products";
@@ -18,16 +18,12 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-    const location = useLocation();
 
     // Ukryj menu na stronach logowania i rejestracji
-    const hideMenu =
-        location.pathname === PathNames.anonymous.login ||
-        location.pathname === PathNames.anonymous.register;
 
     return (
         <>
-            {!hideMenu && <TopMenu />}
+             <TopMenu />
             {children}
         </>
     );
@@ -38,35 +34,35 @@ const App = () => {
         <Router>
             <UserProvider>
                 <CartProvider>
-                    <Layout>
                         <Routes>
                             <Route path={PathNames.anonymous.register} element={<RegisterForm />} />
                             <Route path={PathNames.anonymous.login} element={<LoginForm />} />
 
                             <Route path={PathNames.authenticated.products} element={
                                 <RequireAuth allowedRoles={["WORKER", "CLIENT"]}>
-                                    <Products />
+                                    <Layout>
+                                        <Products />
+                                    </Layout>
                                 </RequireAuth>
                             }/>
 
-                            {/*<Route element={<RequireAuth allowedRoles={["WORKER", "CLIENT"]}/>}>*/}
-                            {/*    <Route path={PathNames.authenticated.orders} element={<Orders />} />*/}
-                            {/*</Route>*/}
-
                             <Route path={PathNames.authenticated.orders} element={
                                 <RequireAuth allowedRoles={['WORKER', 'CLIENT']}>
-                                    <Orders />
+                                    <Layout>
+                                        <Orders />
+                                    </Layout>
                                 </RequireAuth>
                             } />
 
                             <Route path={PathNames.client.cart} element={
                                <RequireAuth allowedRoles={['CLIENT']}>
-                                    <CartPage />
+                                   <Layout>
+                                        <CartPage />
+                                   </Layout>
                                 </RequireAuth>
                             } />
                             <Route path="*" element={<PageNotFound />} />
                         </Routes>
-                    </Layout>
                 </CartProvider>
             </UserProvider>
         </Router>
