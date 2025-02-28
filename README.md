@@ -21,14 +21,14 @@ This repository contains the frontend implementation for an e-commerce platform.
 3. Clone this repository.
 
 ### Installation backend directory
-1. Install dependencies: ***npm install --legacy-peer-deps*** (WARNING: if there any errors caused by packages inconsistency run ***yarn install*** instead)
-2. Run database migrations: ***npx knex migrate:latest***
-3. Start the server: ***npm run server***
+1. Install dependencies: ```npm install --legacy-peer-deps``` (WARNING: if there any errors caused by packages inconsistency run ```yarn install``` instead)
+2. Run database migrations: ```npx knex migrate:latest```
+3. Start the server: ```npm run server```
 
 ### Installation frontend directory
-1. Install dependencies: ***npm install***
-2. Start the server: ***npm run dev***
-3. Open the application in your browser: ***http://localhost:5173***
+1. Install dependencies: ```npm install```
+2. Start the server: ```npm run dev```
+3. Open the application in your browser: ```http://localhost:5173```
 
 ## Example Workflow
 To **log in as a client** please use the example account or create a new account by registration:
